@@ -1,8 +1,8 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -14,54 +14,65 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class Main extends JFrame {
+public class Main {
 
-	public static Main INSTANCE;
+	static JFrame jframe;
 
-	private JPanel contentPane;
-	private ParticleSystem particleSystem;
+	static JPanel drawPanel;
 
-	boolean isMouseDown0, isMouseDown1, isShiftDown, isRedDown, isGreenDown, isBlueDown;
+	static JPanel contentPane;
 
-	public static boolean lines = true;
+	static ParticleSystem particleSystem;
 
-	Point lastMouse = null;
+	static boolean respawnWhenRightClick, isMouseDown0, isMouseDown1, isShiftDown, isRedDown, isGreenDown, isBlueDown,
+			fullscreen;
 
-	public static float rainbowSpeed = 1;
+	static boolean lines = true;
 
-	public static ColorTheme theme = ColorTheme.STATIC;
+	static Point lastMouse = null;
 
-	/**
-	 * Launch the application.
-	 */
+	static float rainbowSpeed = 1;
+
+	static ColorTheme theme = ColorTheme.STATIC;
+
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
+		new Thread(new Runnable() {
 			public void run() {
-				try {
-					Main frame = new Main();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
+				while (true) {
+					try {
+						drawPanel.repaint();
+						Thread.sleep(1l);
+					} catch (Exception e) {
+					}
 				}
 			}
-		});
+		}).start();
+		particleSystem = new ParticleSystem(100);
+		generateWindow(false);
 	}
 
-	/**
-	 * Create the frame.
-	 */
-	public Main() {
-		INSTANCE = this;
-		particleSystem = new ParticleSystem(100);
-		setTitle("Particles");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 798, 512);
+	public static void generateWindow(boolean fullscreen) {
+		jframe = new JFrame();
+		Main.fullscreen = fullscreen;
+		jframe.setTitle("Particles");
+		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		if (fullscreen) {
+			jframe.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			jframe.setUndecorated(true);
+		} else {
+			jframe.setBounds((int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2 - 427),
+					(int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2 - 240), 854, 480);
+		}
 		contentPane = new JPanel();
 		contentPane.setFocusable(true);
 		contentPane.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == 16) {
+				if (e.getKeyCode() == 122) {
+					jframe.setVisible(false);
+					jframe.dispose();
+					generateWindow(!fullscreen);
+				} else if (e.getKeyCode() == 16) {
 					isShiftDown = true;
 				} else if (e.getKeyChar() == 'r' || e.getKeyChar() == 'R') {
 					isRedDown = true;
@@ -76,6 +87,8 @@ public class Main extends JFrame {
 					if (theme == ColorTheme.RAINBOW) {
 						theme = ColorTheme.STATIC;
 					}
+				} else if (e.getKeyChar() == 'q' || e.getKeyChar() == 'Q') {
+					respawnWhenRightClick = !respawnWhenRightClick;
 				} else if (e.getKeyChar() == 'l' || e.getKeyChar() == 'L') {
 					lines = !lines;
 				} else if (e.getKeyChar() == '+') {
@@ -135,10 +148,10 @@ public class Main extends JFrame {
 			}
 		});
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+		jframe.setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 
-		JPanel panel = new JPanel() {
+		drawPanel = new JPanel() {
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
@@ -155,19 +168,9 @@ public class Main extends JFrame {
 				}
 			}
 		};
-		panel.setBackground(Color.GRAY);
-		contentPane.add(panel, BorderLayout.CENTER);
-		new Thread(new Runnable() {
-			public void run() {
-				while (true) {
-					panel.repaint();
-					try {
-						Thread.sleep(1l);
-					} catch (InterruptedException e) {
-					}
-				}
-			}
-		}).start();
+		drawPanel.setBackground(Color.GRAY);
+		contentPane.add(drawPanel, BorderLayout.CENTER);
+		jframe.setVisible(true);
 	}
 
 }

@@ -15,7 +15,7 @@ public class ParticleSystem {
 	}
 
 	public void render(final Graphics g, final JPanel pan, final int mouseX, final int mouseY) {
-		if (particles.size() < amount && !Main.INSTANCE.isMouseDown1) {
+		if (particles.size() < amount && !(Main.isMouseDown1 && !Main.respawnWhenRightClick)) {
 			newParticle();
 		} else if (particles.size() > amount) {
 			particles.remove(0);
@@ -63,6 +63,6 @@ public class ParticleSystem {
 			}
 		}
 
-		particles.add(new Particle(r.nextInt(Main.INSTANCE.getWidth()), r.nextInt(Main.INSTANCE.getHeight()), id));
+		particles.add(new Particle(r.nextInt(Main.jframe.getWidth()), r.nextInt(Main.jframe.getHeight()), id));
 	}
 }

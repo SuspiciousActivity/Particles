@@ -3,8 +3,8 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Particle {
-	private int x;
-	private int y;
+	private float x;
+	private float y;
 	private int k;
 	private final int id;
 	private final int size, halfSize;
@@ -29,8 +29,8 @@ public class Particle {
 
 	public void render(final Color color, final Color lineColor, final Graphics g,
 			final ArrayList<Particle> lastparticles, final int mouseX, final int mouseY) {
-		if (realX < -1 || realY < -1 || realX > Main.INSTANCE.getWidth() + 1.0
-				|| realY > Main.INSTANCE.getHeight() + 1.0) {
+		if (realX < -1 || realY < -1 || realX > Main.jframe.getWidth() + 1.0
+				|| realY > Main.jframe.getHeight() + 1.0) {
 			reset = true;
 		}
 
@@ -42,24 +42,24 @@ public class Particle {
 			++k;
 			timer.updateLastMS();
 		}
-		if (Main.INSTANCE.isMouseDown0 || Main.INSTANCE.isMouseDown1) {
-			final double d = Main.INSTANCE.isMouseDown0 ? 1 : Main.INSTANCE.isMouseDown1 ? -1 : 0;
+		if (Main.isMouseDown0 || Main.isMouseDown1) {
+			final float distance = (float) Math
+					.sqrt(Math.pow(Math.abs(realX - mouseX), 2) + Math.pow(Math.abs(realY - mouseY), 2))
+					* (Main.isMouseDown0 ? 1.0f : -1.0f);
 			if (realX > mouseX) {
-				x -= d;
+				x -= (realX - mouseX) / distance;
 			} else if (realX < mouseX) {
-				x += d;
+				x += (mouseX - realX) / distance;
 			}
 
 			if (realY > mouseY) {
-				y -= d;
+				y -= (realY - mouseY) / distance;
 			} else if (realY < mouseY) {
-				y += d;
+				y += (mouseY - realY) / distance;
 			}
 		}
-		final float drawX = this.x + xx;
-		final float drawY = this.y + yy;
-		realX = drawX;
-		realY = drawY;
+		realX = this.x + xx;
+		realY = this.y + yy;
 
 		if (lastparticles != null) {
 			for (final Particle p : lastparticles) {
@@ -69,7 +69,7 @@ public class Particle {
 				if (getDistanceTo(p) < 100) {
 					if (p != null) {
 						g.setColor(lineColor);
-						g.drawLine((int) (drawX + halfSize), (int) (drawY + halfSize), (int) (p.getX() + halfSize),
+						g.drawLine((int) (realX + halfSize), (int) (realY + halfSize), (int) (p.getX() + halfSize),
 								(int) (p.getY() + halfSize));
 					}
 				}
