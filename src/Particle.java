@@ -29,37 +29,52 @@ public class Particle {
 
 	public void render(final Color color, final Color lineColor, final Graphics g,
 			final ArrayList<Particle> lastparticles, final int mouseX, final int mouseY) {
-		if (realX < -1 || realY < -1 || realX > Main.jframe.getWidth() + 1.0
-				|| realY > Main.jframe.getHeight() + 1.0) {
+		if (realX < -1 || realY < -1 || realX > Main.jframe.getWidth() + 1.0 || realY > Main.jframe.getHeight() + 1.0) {
 			reset = true;
 		}
 
-		float xx = (float) (Math.cos((dir + 90.0f) * 3.141592653589793 / 180.0) * k * 0.7);
-		float yy = (float) (Math.sin((dir + 90.0f) * 3.141592653589793 / 180.0) * k * 0.7);
+		if (!Main.freeze) {
+			float xx = (float) (Math.cos((dir + 90.0f) * 3.141592653589793 / 180.0) * k * 0.7);
+			float yy = (float) (Math.sin((dir + 90.0f) * 3.141592653589793 / 180.0) * k * 0.7);
 
-		timer.updateMS();
-		if (timer.hasTimePassedM(20)) {
-			++k;
-			timer.updateLastMS();
-		}
-		if (Main.isMouseDown0 || Main.isMouseDown1) {
-			final float distance = (float) Math
-					.sqrt(Math.pow(Math.abs(realX - mouseX), 2) + Math.pow(Math.abs(realY - mouseY), 2))
-					* (Main.isMouseDown0 ? 1.0f : -1.0f);
-			if (realX > mouseX) {
-				x -= (realX - mouseX) / distance;
-			} else if (realX < mouseX) {
-				x += (mouseX - realX) / distance;
+			timer.updateMS();
+			if (timer.hasTimePassedM(20)) {
+				++k;
+				timer.updateLastMS();
+			}
+			if (Main.isMouseDown0 || Main.isMouseDown1) {
+				final float distance = (float) Math
+						.sqrt(Math.pow(Math.abs(realX - mouseX), 2) + Math.pow(Math.abs(realY - mouseY), 2))
+						* (Main.isMouseDown0 ? 1.0f : -1.0f);
+				if (realX > mouseX) {
+					x -= (realX - mouseX) / distance;
+				} else if (realX < mouseX) {
+					x += (mouseX - realX) / distance;
+				}
+
+				if (realY > mouseY) {
+					y -= (realY - mouseY) / distance;
+				} else if (realY < mouseY) {
+					y += (mouseY - realY) / distance;
+				}
 			}
 
-			if (realY > mouseY) {
-				y -= (realY - mouseY) / distance;
-			} else if (realY < mouseY) {
-				y += (mouseY - realY) / distance;
+			if (Main.isWDown) {
+				y -= 1;
 			}
+			if (Main.isSDown) {
+				y += 1;
+			}
+			if (Main.isADown) {
+				x -= 1;
+			}
+			if (Main.isDDown) {
+				x += 1;
+			}
+
+			realX = this.x + xx;
+			realY = this.y + yy;
 		}
-		realX = this.x + xx;
-		realY = this.y + yy;
 
 		if (lastparticles != null) {
 			for (final Particle p : lastparticles) {

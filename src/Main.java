@@ -25,7 +25,7 @@ public class Main {
 	static ParticleSystem particleSystem;
 
 	static boolean respawnWhenRightClick, isMouseDown0, isMouseDown1, isShiftDown, isRedDown, isGreenDown, isBlueDown,
-			fullscreen;
+			fullscreen, isWDown, isADown, isSDown, isDDown, freeze;
 
 	static boolean lines = true;
 
@@ -74,6 +74,16 @@ public class Main {
 					generateWindow(!fullscreen);
 				} else if (e.getKeyCode() == 16) {
 					isShiftDown = true;
+				} else if (e.getKeyChar() == 'w' || e.getKeyChar() == 'W') {
+					isWDown = true;
+				} else if (e.getKeyChar() == 'a' || e.getKeyChar() == 'A') {
+					isADown = true;
+				} else if (e.getKeyChar() == 's' || e.getKeyChar() == 'S') {
+					isSDown = true;
+				} else if (e.getKeyChar() == 'd' || e.getKeyChar() == 'D') {
+					isDDown = true;
+				} else if (e.getKeyChar() == 'f' || e.getKeyChar() == 'F') {
+					freeze = !freeze;
 				} else if (e.getKeyChar() == 'r' || e.getKeyChar() == 'R') {
 					isRedDown = true;
 					theme = ColorTheme.RED;
@@ -83,7 +93,7 @@ public class Main {
 				} else if (e.getKeyChar() == 'b' || e.getKeyChar() == 'B') {
 					isBlueDown = true;
 					theme = ColorTheme.BLUE;
-				} else if (e.getKeyChar() == 's' || e.getKeyChar() == 'S') {
+				} else if (e.getKeyChar() == 'e' || e.getKeyChar() == 'E') {
 					if (theme == ColorTheme.RAINBOW) {
 						theme = ColorTheme.STATIC;
 					}
@@ -112,6 +122,14 @@ public class Main {
 			public void keyReleased(KeyEvent e) {
 				if (e.getKeyCode() == 16) {
 					isShiftDown = false;
+				} else if (e.getKeyChar() == 'w' || e.getKeyChar() == 'W') {
+					isWDown = false;
+				} else if (e.getKeyChar() == 'a' || e.getKeyChar() == 'A') {
+					isADown = false;
+				} else if (e.getKeyChar() == 's' || e.getKeyChar() == 'S') {
+					isSDown = false;
+				} else if (e.getKeyChar() == 'd' || e.getKeyChar() == 'D') {
+					isDDown = false;
 				} else if (e.getKeyChar() == 'r' || e.getKeyChar() == 'R') {
 					isRedDown = false;
 				} else if (e.getKeyChar() == 'g' || e.getKeyChar() == 'G') {
